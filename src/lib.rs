@@ -35,6 +35,25 @@ pub fn collider(n: usize) {
     }
 }
 
+pub fn pre_image(image: Vec<u8>) {
+    let mut counter = 0;
+    loop {
+        counter += 1;
+        // https://rust-lang-nursery.github.io/rust-cookbook/algorithms/randomness.html
+        let rand_string: String = thread_rng()
+            .sample_iter(&Alphanumeric)
+            .take(30)
+            .map(char::from)
+            .collect();
+
+        let result = sha_512_n(&rand_string, image.len() * 8);
+        if result == image {
+            println!("string {:?} hashes to {:?}. Found in {counter} tries", rand_string, hex::encode(result));
+            break;
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -84,5 +103,10 @@ mod tests {
     #[test]
     fn collider8() {
         collider(8);
+    }
+
+    #[test]
+    fn pre_image16() {
+        pre_image(hex::decode("3D4B").unwrap());
     }
 }
